@@ -1,0 +1,33 @@
+name: auto_sign
+
+on:
+    push:
+        branches:
+            - master
+    schedule:
+        - cron: "5 16 * * *"
+jobs:
+    start_sign:
+        name: start_daily_sign
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@master
+            - uses: actions/setup-node@v2-beta
+              with:
+                node-version: '14'
+            - name: tieba_sign
+              shell: bash
+              env:
+                LINE_USERID: ${{ secrets.LINE_USERID }}
+                LINECHANNEL: ${{ secrets.LINECHANNEL }}
+                LINESECRET: ${{ secrets.LINESECRET }}
+                LINECHANNELTOKEN: ${{ secrets.LINECHANNELTOKEN }}
+                BDUSS: ${{ secrets.BDUSS }}
+              run: |
+                echo "Install Dependencies"
+                npm i
+                echo "Build Scripts"
+                npm run build
+                echo "Start Script"
+                npm start
